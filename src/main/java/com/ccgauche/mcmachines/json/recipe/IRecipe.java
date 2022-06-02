@@ -1,0 +1,34 @@
+package com.ccgauche.mcmachines.json.recipe;
+
+import com.ccgauche.mcmachines.internals.Clock;
+import com.ccgauche.mcmachines.json.DParser;
+import com.ccgauche.mcmachines.json.FileException;
+import com.ccgauche.mcmachines.json.AdvancedParser;
+import org.jetbrains.annotations.NotNull;
+
+public interface IRecipe {
+
+    String on();
+
+    static IRecipe parse(AdvancedParser.JSONContext context) throws FileException, NoSuchFieldException, InstantiationException, IllegalAccessException {
+        IDProvider on1 = (IDProvider) DParser.parse(IDProvider.class.getTypeName(), context);
+        var on = on1.on;
+        var k = Clock.getCrafts().get(on);
+        if (k == null) {
+            throw new FileException("Can't find craft handler for "+ on);
+        }
+        if (k.getCraftModelType().equals(MCCraft.class)) {
+            return (IRecipe) DParser.parse(MCCraft.class.getTypeName(), context);
+        } else if (k.getCraftModelType().equals(TransformerCraft.class)) {
+            return (IRecipe) DParser.parse(TransformerCraft.class.getTypeName(), context);
+        } else {
+            throw new FileException("Can't find craftmodel "+k.getCraftModelType().getSimpleName());
+        }
+    }
+
+    class IDProvider {
+
+        @NotNull
+        public String on;
+    }
+}

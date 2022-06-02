@@ -1,0 +1,16 @@
+package com.ccgauche.mcmachines.json.conditions;
+
+import com.ccgauche.mcmachines.data.DataCompound;
+import com.ccgauche.mcmachines.machine.IMachine;
+import net.minecraft.block.Block;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.NotNull;
+
+public record Type(@NotNull Block block) implements ICondition{
+
+    @Override
+    public boolean isTrue(@NotNull IMachine machine, @NotNull ServerWorld world, @NotNull BlockPos pos, @NotNull DataCompound data) {
+        return world.getBlockState(pos).getBlock() == block;
+    }
+}

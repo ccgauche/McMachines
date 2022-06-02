@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.ccgauche.mcmachines.mixin",
+  "compatibilityLevel": "JAVA_16",
+  "mixins": [
+    "BlockMixin",
+    "BlockPlaceEvent",
+    "ItemStackMixin",
+    "RecipeManagerAccessor",
+    "ServerPlayerInteraction",
+    "WorldEvent"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
