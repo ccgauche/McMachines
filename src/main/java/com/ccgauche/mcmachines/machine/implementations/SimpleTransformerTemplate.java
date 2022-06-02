@@ -63,37 +63,58 @@ public class SimpleTransformerTemplate implements IMachine, ICraftingMachine {
 		if (furnaceBlock == null)
 			return;
 		int k = DataRegistry.ENERGY_CONTENT.getOrDefault(object, 0);
-		a: for (int i = 0; i < 9; i++) {
-			ItemStack item = furnaceBlock.getStack(i);
-			if (item == null || item.getItem() == null || item.isEmpty())
+		for (TransformerCraft craft : crafts) {
+			if (k < craft.energy_use
+					|| !craft.inputs.stream().allMatch(e -> containsEnoughItem(e.first(), e.second(), furnaceBlock))) {
 				continue;
-
-			CItem citem = new CItem(item);
-
-			for (TransformerCraft craft : crafts) {
-				if (k < craft.energy_use) {
+			}
+			craft.inputs.forEach(e -> removeItem(e.first(), e.second(), furnaceBlock));
+			DataRegistry.ENERGY_CONTENT.set(object, k - craft.energy_use);
+			for (var toDrop : craft.outputs) {
+				ItemStack stack = toDrop.first().copy();
+				int multiplier = toDrop.second() / 100 + ((new Random().nextInt(100) <= toDrop.second() % 100) ? 1 : 0);
+				stack.setCount(stack.getCount() * multiplier);
+				if (stack.getCount() == 0) {
 					continue;
 				}
-				if (citem.equals(craft.input_type) && item.getCount() >= craft.input_amount) {
-					ItemUtils.removeItem(furnaceBlock, i, craft.input_amount);
-					DataRegistry.ENERGY_CONTENT.set(object, k - craft.energy_use);
-					for (var toDrop : craft.outputs) {
-						ItemStack stack = toDrop.first().copy();
-						int multiplier = toDrop.second() / 100
-								+ ((new Random().nextInt(100) <= toDrop.second() % 100) ? 1 : 0);
-						System.out.println("Multiplier " + multiplier + " " + stack);
-						stack.setCount(stack.getCount() * multiplier);
-						if (stack.getCount() == 0) {
-							continue;
-						}
-						System.out.println("stack " + stack);
-						ItemUtils.dispense((ServerWorld) world, pos, stack);
-					}
-					break a;
+				ItemUtils.dispense((ServerWorld) world, pos, stack);
+			}
+			break;
+
+		}
+	}
+
+	public static boolean containsEnoughItem(CItem cItem, int number, DropperBlockEntity inv) {
+		for (int i = 0; i < 9; i++) {
+			ItemStack item = inv.getStack(i);
+			if (item == null || item.getItem() == null || item.isEmpty())
+				continue;
+			CItem cItem1 = new CItem(item);
+			if (cItem1.equals(cItem)) {
+				number -= item.getCount();
+				if (number < 1) {
+					return true;
 				}
 			}
 		}
+		return false;
+	}
 
+	public static void removeItem(CItem cItem, int number, DropperBlockEntity inv) {
+		for (int i = 0; i < 9; i++) {
+			ItemStack item = inv.getStack(i);
+			if (item == null || item.getItem() == null || item.isEmpty())
+				continue;
+			CItem cItem1 = new CItem(item);
+			if (cItem1.equals(cItem)) {
+				int toRemove = Math.min(item.getCount(), number);
+				number -= toRemove;
+				ItemUtils.removeItem(inv, i, toRemove);
+				if (number == 0) {
+					return;
+				}
+			}
+		}
 	}
 
 	@Override

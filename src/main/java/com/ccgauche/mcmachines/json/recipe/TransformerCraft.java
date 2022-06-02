@@ -16,8 +16,7 @@ public class TransformerCraft implements IRecipe {
 	public String on;
 	public Integer energy_use;
 	@NotNull
-	public CItem input_type;
-	public Integer input_amount;
+	public List<@NotNull Dual<@NotNull CItem, @NotNull Integer>> inputs;
 	@NotNull
 	public List<@NotNull Dual<@NotNull ItemStack, @NotNull Integer>> outputs;
 
