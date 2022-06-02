@@ -9,6 +9,7 @@
     "ItemStackMixin",
     "RecipeManagerAccessor",
     "ServerPlayerInteraction",
+    "ServerWorldMixin",
     "WorldEvent"
   ],
   "injectors": {

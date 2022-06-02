@@ -1,8 +1,15 @@
 package com.ccgauche.mcmachines.json.recipe;
 
+import java.util.List;
+import java.util.Map;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.ccgauche.mcmachines.ExampleMod;
 import com.ccgauche.mcmachines.data.CItem;
 import com.google.common.collect.ImmutableMap;
-import com.ccgauche.mcmachines.ExampleMod;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
@@ -10,49 +17,46 @@ import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.ShapedRecipe;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Map;
-
+@SuppressWarnings("NotNullFieldNotInitialized")
 public class MCCraft implements IRecipe {
 
-    @NotNull
-    public String on;
-    @NotNull
-    public ItemStack output;
-    @NotNull
-    public List<@NotNull List<@Nullable CItem>> inputs;
+	@NotNull
+	public String on;
+	@NotNull
+	public ItemStack output;
+	@NotNull
+	public List<@NotNull List<@Nullable CItem>> inputs;
 
-    public void register(Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> map2) {
-        var recipe = create();
-        map2.computeIfAbsent(RecipeType.CRAFTING, (_i) -> ImmutableMap.builder()).put(recipe.getId(), recipe);
-    }
+	public void register(Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> map2) {
+		var recipe = create();
+		map2.computeIfAbsent(RecipeType.CRAFTING, (_i) -> ImmutableMap.builder()).put(recipe.getId(), recipe);
+	}
 
-    public ShapedRecipe create() {
-        int height = inputs.size();
-        int width = inputs.get(0).size();
-        @NotNull Ingredient[] items = new Ingredient[height * width];
-        int k = 0;
-        for (var k1 : inputs) {
-            for (var k2 : k1) {
-                if (k2 == null) {
-                    items[k] = Ingredient.EMPTY;
-                } else {
-                    Ingredient i = Ingredient.ofStacks(k2.asStack(1));
-                    items[k] = i;
-                }
-                k++;
-            }
-        }
-        ExampleMod.KKK++;
-        return new ShapedRecipe(new Identifier("customitemsv1_0_0", "customitem" + ExampleMod.KKK), "", width, height,
-                DefaultedList.copyOf(Ingredient.EMPTY, items), output);
-    }
+	public ShapedRecipe create() {
+		int height = inputs.size();
+		int width = inputs.get(0).size();
+		@NotNull
+		Ingredient[] items = new Ingredient[height * width];
+		int k = 0;
+		for (var k1 : inputs) {
+			for (var k2 : k1) {
+				if (k2 == null) {
+					items[k] = Ingredient.EMPTY;
+				} else {
+					Ingredient i = Ingredient.ofStacks(k2.asStack(1));
+					items[k] = i;
+				}
+				k++;
+			}
+		}
+		ExampleMod.KKK++;
+		return new ShapedRecipe(new Identifier("customitemsv1_0_0", "customitem" + ExampleMod.KKK), "", width, height,
+				DefaultedList.copyOf(Ingredient.EMPTY, items), output);
+	}
 
-    @Override
-    public String on() {
-        return on;
-    }
+	@Override
+	public String on() {
+		return on;
+	}
 }

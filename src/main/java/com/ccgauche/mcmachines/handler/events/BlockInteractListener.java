@@ -8,18 +8,19 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.world.World;
 
-public interface BlockInteractListener extends Listener{
+public interface BlockInteractListener extends Listener {
 
-    boolean onInteract(BlockInteract blockInteract);
+	boolean onInteract(BlockInteract blockInteract);
 
-    record BlockInteract(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, BlockHitResult blockHitResult) {
+	record BlockInteract(ServerPlayerEntity player, World world, ItemStack stack, Hand hand,
+			BlockHitResult blockHitResult) {
 
-        public BlockState getBlockState() {
-            return world.getBlockState(blockHitResult.getBlockPos());
-        }
+		public BlockState getBlockState() {
+			return world.getBlockState(blockHitResult.getBlockPos());
+		}
 
-        public Block getBlock() {
-            return getBlockState().getBlock();
-        }
-    }
+		public Block getBlock() {
+			return getBlockState().getBlock();
+		}
+	}
 }
