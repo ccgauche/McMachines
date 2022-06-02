@@ -62,6 +62,9 @@ public class SimpleTransformerTemplate implements IMachine, ICraftingMachine {
 		DropperBlockEntity furnaceBlock = (DropperBlockEntity) world.getBlockEntity(pos);
 		if (furnaceBlock == null)
 			return;
+		if (conditions != null && !conditions.isTrue(this, (ServerWorld) world, pos, object)) {
+			return;
+		}
 		int k = DataRegistry.ENERGY_CONTENT.getOrDefault(object, 0);
 		for (TransformerCraft craft : crafts) {
 			if (k < craft.energy_use

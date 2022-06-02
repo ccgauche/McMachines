@@ -14,6 +14,7 @@ import com.ccgauche.mcmachines.registry.DataRegistry;
 import net.minecraft.block.entity.DropperBlockEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -52,6 +53,9 @@ public class SimpleChargerTemplate implements IMachine {
 		DropperBlockEntity furnaceBlock = (DropperBlockEntity) world.getBlockEntity(pos);
 		if (furnaceBlock == null)
 			return;
+		if (conditions != null && !conditions.isTrue(this, (ServerWorld) world, pos, object)) {
+			return;
+		}
 		int e = DataRegistry.ENERGY_CONTENT.getOrDefault(object, 0);
 		int k = DataRegistry.CHARGE_PER_TICK.getOrDefault(object, 0);
 		if (k == 0 || e == 0)

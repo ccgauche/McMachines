@@ -14,7 +14,7 @@ public record IsDayOrNight(boolean day) implements ICondition {
 	@Override
 	public boolean isTrue(@NotNull IMachine machine, @NotNull ServerWorld world, @NotNull BlockPos pos,
 			@NotNull DataCompound data) {
-		return day == (world.getLightLevel(LightType.SKY, pos) > 14 && day());
+		return day == (world.getLightLevel(LightType.SKY, pos) > 14 && day(world));
 	}
 
 	private boolean day(@NotNull ServerWorld world) {

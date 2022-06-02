@@ -14,6 +14,7 @@ import com.ccgauche.mcmachines.machine.IMachine;
 import com.ccgauche.mcmachines.registry.DataRegistry;
 
 import net.minecraft.item.Items;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -53,6 +54,9 @@ public final class ConstantGeneratorTemplate implements IMachine {
 	@Override
 	public void tick(@NotNull DataCompound object, World world, BlockPos pos) {
 		Cable.applyCableTransform(pos, world);
+		if (conditions != null && !conditions.isTrue(this, (ServerWorld) world, pos, object)) {
+			return;
+		}
 		int max = DataRegistry.ENERGY_MAX.getOrDefault(world, pos, 0);
 		int energy = DataRegistry.ENERGY_CONTENT.getOrDefault(world, pos, 0);
 		DataRegistry.ENERGY_CONTENT.set(world, pos,
