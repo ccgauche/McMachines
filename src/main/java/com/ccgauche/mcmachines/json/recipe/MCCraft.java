@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import com.ccgauche.mcmachines.ExampleMod;
 import com.ccgauche.mcmachines.data.CItem;
 import com.ccgauche.mcmachines.json.conditions.ICondition;
+import com.ccgauche.mcmachines.registry.CraftRegistry;
 import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.item.ItemStack;
@@ -33,6 +34,7 @@ public class MCCraft implements IRecipe {
 
 	public void register(Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> map2) {
 		var recipe = create();
+		CraftRegistry.recipes.add(recipe.getId());
 		map2.computeIfAbsent(RecipeType.CRAFTING, (_i) -> ImmutableMap.builder()).put(recipe.getId(), recipe);
 	}
 
@@ -54,7 +56,7 @@ public class MCCraft implements IRecipe {
 			}
 		}
 		ExampleMod.KKK++;
-		return new ShapedRecipe(new Identifier("customitemsv1_0_0", "customitem" + ExampleMod.KKK), "", width, height,
+		return new ShapedRecipe(new Identifier("civ1", "ci" + ExampleMod.KKK), "ma" + ExampleMod.KKK, width, height,
 				DefaultedList.copyOf(Ingredient.EMPTY, items), output);
 	}
 

@@ -1,6 +1,8 @@
 package com.ccgauche.mcmachines.registry;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jetbrains.annotations.Contract;
@@ -16,6 +18,7 @@ import net.minecraft.recipe.RecipeType;
 import net.minecraft.util.Identifier;
 
 public class CraftRegistry {
+	public static final List<Identifier> recipes = new ArrayList<>();
 	@NotNull
 	private final static HashMap<String, ICraftingMachine> crafts = new HashMap<>();
 
