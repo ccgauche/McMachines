@@ -18,7 +18,7 @@ import net.minecraft.recipe.RecipeType;
 import net.minecraft.util.Identifier;
 
 public class CraftRegistry {
-	public static final List<Identifier> recipes = new ArrayList<>();
+	public static final List<Recipe<?>> recipes = new ArrayList<>();
 	@NotNull
 	private final static HashMap<String, ICraftingMachine> crafts = new HashMap<>();
 

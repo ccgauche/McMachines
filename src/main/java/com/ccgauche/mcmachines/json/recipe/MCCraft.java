@@ -34,7 +34,7 @@ public class MCCraft implements IRecipe {
 
 	public void register(Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> map2) {
 		var recipe = create();
-		CraftRegistry.recipes.add(recipe.getId());
+		CraftRegistry.recipes.add(recipe);
 		map2.computeIfAbsent(RecipeType.CRAFTING, (_i) -> ImmutableMap.builder()).put(recipe.getId(), recipe);
 	}
 
@@ -56,7 +56,7 @@ public class MCCraft implements IRecipe {
 			}
 		}
 		ExampleMod.KKK++;
-		return new ShapedRecipe(new Identifier("civ1", "ci" + ExampleMod.KKK), "ma" + ExampleMod.KKK, width, height,
+		return new ShapedRecipe(new Identifier("abcdefg", "a" + ExampleMod.KKK), "", width, height,
 				DefaultedList.copyOf(Ingredient.EMPTY, items), output);
 	}
 
