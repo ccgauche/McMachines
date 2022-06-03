@@ -24,6 +24,7 @@ public final class ConstantGeneratorTemplate implements IMachine {
 	private final @Nullable DataCompound properties;
 	private final @Nullable ICondition conditions;
 
+	@NotNull
 	private final IItem item;
 
 	public ConstantGeneratorTemplate(@NotNull String id, @NotNull String name, @Nullable DataCompound properties,

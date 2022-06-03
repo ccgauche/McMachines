@@ -31,6 +31,7 @@ public class SimpleTransformerTemplate implements IMachine, ICraftingMachine {
 	private final @Nullable DataCompound properties;
 	private final @Nullable ICondition conditions;
 
+	@NotNull
 	private final IItem item;
 
 	public SimpleTransformerTemplate(@NotNull String id, @NotNull String name, @Nullable DataCompound properties,
@@ -64,9 +65,8 @@ public class SimpleTransformerTemplate implements IMachine, ICraftingMachine {
 		}
 		int k = DataRegistry.ENERGY_CONTENT.getOrDefault(object, 0);
 		for (TransformerCraft craft : crafts) {
-			if (k < craft.energy_use
-					|| !craft.inputs.stream()
-							.allMatch(e -> ItemUtils.containsEnoughItem(e.first(), e.second(), furnaceBlock))) {
+			if (k < craft.energy_use || !craft.inputs.stream()
+					.allMatch(e -> ItemUtils.containsEnoughItem(e.first(), e.second(), furnaceBlock))) {
 				continue;
 			}
 			craft.inputs.forEach(e -> ItemUtils.removeItem(e.first(), e.second(), furnaceBlock));

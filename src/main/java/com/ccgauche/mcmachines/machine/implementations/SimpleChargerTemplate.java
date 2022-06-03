@@ -25,6 +25,7 @@ public class SimpleChargerTemplate implements IMachine {
 	private final @Nullable DataCompound properties;
 	private final @Nullable ICondition conditions;
 
+	@NotNull
 	private final IItem item;
 
 	public SimpleChargerTemplate(@NotNull String id, @NotNull String name, @Nullable DataCompound properties,

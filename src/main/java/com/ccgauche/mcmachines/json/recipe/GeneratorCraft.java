@@ -18,10 +18,13 @@ public class GeneratorCraft implements IRecipe {
 	public List<@NotNull Dual<@NotNull CItem, @NotNull Integer>> inputs;
 	@NotNull
 	public List<@NotNull Dual<@NotNull ItemStack, @NotNull Integer>> outputs;
+	@NotNull
 	public Integer energy_production;
+	@NotNull
 	public Integer tick_duration;
 
 	@Override
+	@NotNull
 	public String on() {
 		return on;
 	}

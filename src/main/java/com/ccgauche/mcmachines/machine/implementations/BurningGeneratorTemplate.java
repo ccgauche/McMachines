@@ -31,6 +31,7 @@ public class BurningGeneratorTemplate implements IMachine, ICraftingMachine {
 	private final @Nullable DataCompound properties;
 	private final @Nullable ICondition conditions;
 
+	@NotNull
 	private final IItem item;
 
 	public BurningGeneratorTemplate(@NotNull String id, @NotNull String name, @Nullable DataCompound properties,
