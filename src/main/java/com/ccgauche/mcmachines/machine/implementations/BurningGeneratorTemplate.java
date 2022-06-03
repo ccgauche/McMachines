@@ -61,6 +61,8 @@ public class BurningGeneratorTemplate implements IMachine, ICraftingMachine {
 
 	@Override
 	public void tick(@NotNull DataCompound object, World world, BlockPos pos) {
+		if (world.isReceivingRedstonePower(pos))
+			return;
 		DropperBlockEntity furnaceBlock = (DropperBlockEntity) world.getBlockEntity(pos);
 		Cable.applyCableTransform(pos, world);
 		if (conditions != null && !conditions.isTrue(this, (ServerWorld) world, pos, object)) {

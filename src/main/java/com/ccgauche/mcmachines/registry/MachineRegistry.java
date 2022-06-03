@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.ccgauche.mcmachines.machine.Cable;
 import com.ccgauche.mcmachines.machine.ICraftingMachine;
 import com.ccgauche.mcmachines.machine.IMachine;
 
@@ -13,6 +14,10 @@ public final class MachineRegistry {
 
 	@NotNull
 	private final static HashMap<String, IMachine> map = new HashMap<>();
+
+	static {
+		add(new Cable());
+	}
 
 	@NotNull
 	public static HashMap<String, IMachine> get() {

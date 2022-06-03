@@ -54,6 +54,8 @@ public final class ConstantGeneratorTemplate implements IMachine {
 
 	@Override
 	public void tick(@NotNull DataCompound object, World world, BlockPos pos) {
+		if (world.isReceivingRedstonePower(pos))
+			return;
 		Cable.applyCableTransform(pos, world);
 		if (conditions != null && !conditions.isTrue(this, (ServerWorld) world, pos, object)) {
 			return;

@@ -60,6 +60,8 @@ public class SimpleTransformerTemplate implements IMachine, ICraftingMachine {
 		DropperBlockEntity furnaceBlock = (DropperBlockEntity) world.getBlockEntity(pos);
 		if (furnaceBlock == null)
 			return;
+		if (world.isReceivingRedstonePower(pos))
+			return;
 		if (conditions != null && !conditions.isTrue(this, (ServerWorld) world, pos, object)) {
 			return;
 		}

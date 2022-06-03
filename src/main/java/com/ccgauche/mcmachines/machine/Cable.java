@@ -52,9 +52,12 @@ public class Cable implements IMachine {
 	public void tick(@NotNull DataCompound object, World world, BlockPos pos) {
 		Integer[] b = materials.get(world.getBlockState(pos).getBlock());
 		if (b == null) {
+			System.out.println("Can't find cable for " + world.getBlockState(pos).getBlock());
 			DataRegistry.getMap(world).remove(pos);
 			return;
 		}
+		if (world.isReceivingRedstonePower(pos))
+			return;
 		applyCableTransform(pos, world);
 	}
 
