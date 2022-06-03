@@ -15,6 +15,7 @@ import com.ccgauche.mcmachines.data.CItem;
 import com.ccgauche.mcmachines.data.DataCompound;
 import com.ccgauche.mcmachines.json.conditions.ICondition;
 import com.ccgauche.mcmachines.json.parser.*;
+import com.ccgauche.mcmachines.json.recipe.GeneratorCraft;
 import com.ccgauche.mcmachines.json.recipe.IRecipe;
 import com.ccgauche.mcmachines.json.recipe.MCCraft;
 import com.ccgauche.mcmachines.json.recipe.TransformerCraft;
@@ -43,6 +44,7 @@ public class DParser {
 		funcMap.put(IRecipe.IDProvider.class.getTypeName(), createBuilder(IRecipe.IDProvider.class));
 		funcMap.put(MCCraft.class.getTypeName(), createBuilder(MCCraft.class));
 		funcMap.put(TransformerCraft.class.getTypeName(), createBuilder(TransformerCraft.class));
+		funcMap.put(GeneratorCraft.class.getTypeName(), createBuilder(GeneratorCraft.class));
 		funcMap.put(IRecipe.class.getTypeName(), IRecipe::parse);
 	}
 

@@ -23,6 +23,8 @@ public interface IRecipe {
 			return (IRecipe) DParser.parse(MCCraft.class.getTypeName(), context);
 		} else if (k.getCraftModelType().equals(TransformerCraft.class)) {
 			return (IRecipe) DParser.parse(TransformerCraft.class.getTypeName(), context);
+		} else if (k.getCraftModelType().equals(GeneratorCraft.class)) {
+			return (IRecipe) DParser.parse(GeneratorCraft.class.getTypeName(), context);
 		} else {
 			throw new FileException("Can't find craftmodel " + k.getCraftModelType().getSimpleName());
 		}

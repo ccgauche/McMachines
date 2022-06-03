@@ -1,12 +1,17 @@
 package com.ccgauche.mcmachines.utils;
 
 import java.util.List;
+import java.util.Random;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.ccgauche.mcmachines.data.CItem;
+import com.ccgauche.mcmachines.json.Dual;
+
 import net.minecraft.block.dispenser.DispenserBehavior;
 import net.minecraft.block.dispenser.ItemDispenserBehavior;
+import net.minecraft.block.entity.DropperBlockEntity;
 import net.minecraft.block.entity.HopperBlockEntity;
 import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.inventory.Inventory;
@@ -45,6 +50,51 @@ public class ItemUtils {
 		}
 		if (itemStack2 != null && !itemStack2.isEmpty()) {
 			BEHAVIOR.dispense(blockPointerImpl, itemStack);
+		}
+	}
+
+	public static boolean containsEnoughItem(CItem cItem, int number, DropperBlockEntity inv) {
+		for (int i = 0; i < 9; i++) {
+			ItemStack item = inv.getStack(i);
+			if (item == null || item.getItem() == null || item.isEmpty())
+				continue;
+			CItem cItem1 = new CItem(item);
+			if (cItem1.equals(cItem)) {
+				number -= item.getCount();
+				if (number < 1) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public static void removeItem(CItem cItem, int number, DropperBlockEntity inv) {
+		for (int i = 0; i < 9; i++) {
+			ItemStack item = inv.getStack(i);
+			if (item == null || item.getItem() == null || item.isEmpty())
+				continue;
+			CItem cItem1 = new CItem(item);
+			if (cItem1.equals(cItem)) {
+				int toRemove = Math.min(item.getCount(), number);
+				number -= toRemove;
+				ItemUtils.removeItem(inv, i, toRemove);
+				if (number == 0) {
+					return;
+				}
+			}
+		}
+	}
+
+	public static void outputItems(ServerWorld world, BlockPos pos, List<Dual<ItemStack, Integer>> outputs) {
+		for (var toDrop : outputs) {
+			ItemStack stack = toDrop.first().copy();
+			int multiplier = toDrop.second() / 100 + ((new Random().nextInt(100) <= toDrop.second() % 100) ? 1 : 0);
+			stack.setCount(stack.getCount() * multiplier);
+			if (stack.getCount() == 0) {
+				continue;
+			}
+			ItemUtils.dispense(world, pos, stack);
 		}
 	}
 

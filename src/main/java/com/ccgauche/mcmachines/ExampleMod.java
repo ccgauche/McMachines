@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import com.ccgauche.mcmachines.data.IItem;
 import com.ccgauche.mcmachines.json.*;
 import com.ccgauche.mcmachines.json.recipe.IRecipe;
+import com.ccgauche.mcmachines.machine.implementations.BurningGeneratorTemplate;
 import com.ccgauche.mcmachines.machine.implementations.ConstantGeneratorTemplate;
 import com.ccgauche.mcmachines.machine.implementations.SimpleChargerTemplate;
 import com.ccgauche.mcmachines.machine.implementations.SimpleTransformerTemplate;
@@ -93,6 +94,11 @@ public class ExampleMod implements ModInitializer {
 	public static void loadMachineFile(String id, Machine machine) {
 		if (machine.mode == MachineMode.CONSTANT_GENERATOR) {
 			ConstantGeneratorTemplate impl = new ConstantGeneratorTemplate(id, machine.name,
+					machine.properties.orElse(null), machine.conditions.orElse(null));
+			MachineRegistry.add(impl);
+			ItemRegistry.addItem(impl.getRegistryItem());
+		} else if (machine.mode == MachineMode.BURNING_GENERATOR) {
+			BurningGeneratorTemplate impl = new BurningGeneratorTemplate(id, machine.name,
 					machine.properties.orElse(null), machine.conditions.orElse(null));
 			MachineRegistry.add(impl);
 			ItemRegistry.addItem(impl.getRegistryItem());
