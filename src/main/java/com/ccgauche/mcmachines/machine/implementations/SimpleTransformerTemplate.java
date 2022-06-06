@@ -71,9 +71,13 @@ public class SimpleTransformerTemplate implements IMachine, ICraftingMachine {
 					.allMatch(e -> ItemUtils.containsEnoughItem(e.first(), e.second(), furnaceBlock))) {
 				continue;
 			}
+			if (!craft.conditions.map(e -> e.isTrue(this, (ServerWorld) world, pos, object)).orElse(true)) {
+				continue;
+			}
 			craft.inputs.forEach(e -> ItemUtils.removeItem(e.first(), e.second(), furnaceBlock));
 			DataRegistry.ENERGY_CONTENT.set(object, k - craft.energy_use);
 			ItemUtils.outputItems((ServerWorld) world, pos, craft.outputs);
+			craft.post_craft.ifPresent(e -> e.isTrue(this, (ServerWorld) world, pos, object));
 			return;
 		}
 	}

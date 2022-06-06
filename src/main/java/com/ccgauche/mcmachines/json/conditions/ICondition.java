@@ -52,12 +52,19 @@ public interface ICondition {
 						return new IsDayOrNight(false);
 					} else if (funcname.equalsIgnoreCase("type")) {
 						return new Type(Registry.BLOCK.get(new Identifier(arguments.get(0))));
+					} else if (funcname.equalsIgnoreCase("settype")) {
+						return new SetType(Registry.BLOCK.get(new Identifier(arguments.get(0))));
+					} else if (funcname.equalsIgnoreCase("breakBlock")) {
+						return new BreakBlock();
+					} else if (funcname.equalsIgnoreCase("prop") || funcname.equalsIgnoreCase("property")) {
+						return new PropertyEquals(arguments);
 					} else if (funcname.equalsIgnoreCase("relative") || funcname.equalsIgnoreCase("rel")
 							|| funcname.equalsIgnoreCase("~")) {
-						System.out.println(arguments);
 						return new Relative(Integer.parseInt(arguments.get(0)), Integer.parseInt(arguments.get(1)),
 								Integer.parseInt(arguments.get(2)),
 								Objects.requireNonNull(ICondition.parse(arguments.get(3))));
+					} else if (funcname.equalsIgnoreCase("facing")) {
+						return new Facing(Objects.requireNonNull(ICondition.parse(arguments.get(0))));
 					} else {
 						System.out.println("Invalid FuncName " + funcname);
 						System.exit(0);

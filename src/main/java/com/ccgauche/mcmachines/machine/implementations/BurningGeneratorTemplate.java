@@ -84,10 +84,14 @@ public class BurningGeneratorTemplate implements IMachine, ICraftingMachine {
 					.allMatch(e -> ItemUtils.containsEnoughItem(e.first(), e.second(), furnaceBlock))) {
 				continue;
 			}
+			if (!craft.conditions.map(e -> e.isTrue(this, (ServerWorld) world, pos, object)).orElse(true)) {
+				continue;
+			}
 			craft.inputs.forEach(e -> ItemUtils.removeItem(e.first(), e.second(), furnaceBlock));
 			DataRegistry.GEN_REMAINING_SECS.set(world, pos, craft.tick_duration);
 			DataRegistry.GEN_PER_TICK.set(world, pos, craft.energy_production);
 			ItemUtils.outputItems((ServerWorld) world, pos, craft.outputs);
+			craft.post_craft.ifPresent(e -> e.isTrue(this, (ServerWorld) world, pos, object));
 			break;
 		}
 	}

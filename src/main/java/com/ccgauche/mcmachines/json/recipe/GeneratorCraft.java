@@ -25,6 +25,7 @@ public class GeneratorCraft implements IRecipe {
 	@NotNull
 	public Integer tick_duration;
 	public Optional<ICondition> conditions;
+	public Optional<ICondition> post_craft;
 
 	@Override
 	@NotNull

@@ -2,14 +2,12 @@ package com.ccgauche.mcmachines.json.recipe;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.ccgauche.mcmachines.ExampleMod;
 import com.ccgauche.mcmachines.data.CItem;
-import com.ccgauche.mcmachines.json.conditions.ICondition;
 import com.ccgauche.mcmachines.registry.CraftRegistry;
 import com.google.common.collect.ImmutableMap;
 
@@ -30,7 +28,6 @@ public class MCCraft implements IRecipe {
 	public ItemStack output;
 	@NotNull
 	public List<@NotNull List<@Nullable CItem>> inputs;
-	public Optional<ICondition> conditions;
 
 	public void register(Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> map2) {
 		var recipe = create();

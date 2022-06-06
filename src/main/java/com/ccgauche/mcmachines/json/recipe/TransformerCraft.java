@@ -22,6 +22,7 @@ public class TransformerCraft implements IRecipe {
 	@NotNull
 	public List<@NotNull Dual<@NotNull ItemStack, @NotNull Integer>> outputs;
 	public Optional<ICondition> conditions;
+	public Optional<ICondition> post_craft;
 
 	@Override
 	public String on() {
