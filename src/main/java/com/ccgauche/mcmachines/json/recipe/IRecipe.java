@@ -12,7 +12,7 @@ public interface IRecipe {
 	String on();
 
 	static IRecipe parse(JSONContext context)
-			throws FileException, NoSuchFieldException, InstantiationException, IllegalAccessException {
+			throws Exception {
 		IDProvider on1 = (IDProvider) DParser.parse(IDProvider.class.getTypeName(), context);
 		var on = on1.on;
 		var k = CraftRegistry.get(on);

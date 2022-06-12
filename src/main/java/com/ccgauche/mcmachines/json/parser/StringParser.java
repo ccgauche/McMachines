@@ -7,7 +7,7 @@ import com.ccgauche.mcmachines.json.JSONContext;
 
 public class StringParser {
 	@NotNull
-	public static String parse(@NotNull JSONContext object) throws FileException {
+	public static String parse(@NotNull JSONContext object) throws Exception {
 		if (object.object() == null || object.object().getAsString() == null) {
 			throw new FileException(
 					"Invalid JSON file \"" + object.jsonFile() + "\", expected string (" + object + ")");

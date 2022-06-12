@@ -40,7 +40,7 @@ public class BurningGeneratorTemplate implements IMachine, ICraftingMachine {
 		this.name = name;
 		this.properties = properties;
 		this.conditions = conditions;
-		item = new IItem.Basic(Items.DROPPER, this.name, this.id, this.properties, List.of());
+		item = new IItem.Basic(Items.DROPPER, this.name, this.id, this.properties, List.of(), List.of());
 	}
 
 	public String id() {

@@ -13,7 +13,7 @@ import net.minecraft.util.registry.Registry;
 public class BlockParser {
 
 	@NotNull
-	public static Block parse(@NotNull JSONContext object) throws FileException {
+	public static Block parse(@NotNull JSONContext object) throws Exception {
 		var k1 = StringParser.parse(object);
 		if (!k1.contains(":"))
 			throw new FileException(

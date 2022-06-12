@@ -11,8 +11,7 @@ import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.ccgauche.mcmachines.data.CItem;
-import com.ccgauche.mcmachines.data.DataCompound;
+import com.ccgauche.mcmachines.data.*;
 import com.ccgauche.mcmachines.json.conditions.ICondition;
 import com.ccgauche.mcmachines.json.parser.*;
 import com.ccgauche.mcmachines.json.recipe.GeneratorCraft;
@@ -32,13 +31,18 @@ public class DParser {
 
 	static {
 		funcMap.put(Integer.class.getTypeName(), IntParser::parse);
+		funcMap.put(Float.class.getTypeName(), IntParser::parseFloat);
 		funcMap.put(String.class.getTypeName(), StringParser::parse);
 		funcMap.put(DataCompound.class.getTypeName(), DataCompoundParser::parse);
 		funcMap.put(CItem.class.getTypeName(), ItemParser::parse);
 		funcMap.put(ItemStack.class.getTypeName(), ItemStackParser::parse);
 		funcMap.put(ItemFile.class.getTypeName(), createBuilder(ItemFile.class));
+		funcMap.put(Attribute.class.getTypeName(), createBuilder(Attribute.class));
 		funcMap.put(Machine.class.getTypeName(), createBuilder(Machine.class));
 		funcMap.put(MachineMode.class.getTypeName(), createEnum(MachineMode.class));
+		funcMap.put(SlotType.class.getTypeName(), createEnum(SlotType.class));
+		funcMap.put(OperationType.class.getTypeName(), createEnum(OperationType.class));
+		funcMap.put(AttributeType.class.getTypeName(), createEnum(AttributeType.class));
 		funcMap.put(Block.class.getTypeName(), BlockParser::parse);
 		funcMap.put(ICondition.class.getTypeName(), IConditionParser::parse);
 		funcMap.put(IRecipe.IDProvider.class.getTypeName(), createBuilder(IRecipe.IDProvider.class));
@@ -62,14 +66,16 @@ public class DParser {
 
 			T t = clas.newInstance();
 			for (Field field : clas.getDeclaredFields()) {
-				var l = parse(field.getGenericType().getTypeName(), e.swap(object.get(field.getName())));
-				field.set(t, l);
+				try {
+					var l = parse(field.getGenericType().getTypeName(), e.swap(object.get(field.getName())));
+					field.set(t, l);
+				} catch (FileException | NoSuchFieldException | InstantiationException | IllegalAccessException ex) {
+					throw new Exception("Reading field " + field.getName(), ex);
+				}
 			}
 			return t;
 		};
 	}
-
-
 
 	public static List<String> create(String k) {
 		List<String> str = new ArrayList<>();
@@ -124,7 +130,7 @@ public class DParser {
 
 	@NotNull
 	public static Object parse(String clas, JSONContext object)
-			throws FileException, NoSuchFieldException, InstantiationException, IllegalAccessException {
+			throws Exception {
 		var t = funcMap.get(clas);
 		if (t != null) {
 			return t.apply(object);

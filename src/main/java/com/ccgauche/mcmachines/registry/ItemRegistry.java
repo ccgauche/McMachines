@@ -23,6 +23,15 @@ public class ItemRegistry {
 		Registry.addListeners(item);
 	}
 
+	@NotNull
+	public static IItem getItemOrCrash(@NotNull String id) {
+		var h = getItem(id);
+		if (h == null) {
+			throw new RuntimeException("Invalid ID " + id + " not found");
+		}
+		return h;
+	}
+
 	@Nullable
 	public static IItem getItem(@NotNull String id) {
 		return items.get(id);

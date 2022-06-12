@@ -12,7 +12,7 @@ public class DualParser {
 	@NotNull
 	public static <T, E> Dual<T, E> parse(@NotNull JSONContext object, @NotNull FunctionThrow<JSONContext, T> func,
 			@NotNull FunctionThrow<JSONContext, E> func1)
-			throws FileException, NoSuchFieldException, InstantiationException, IllegalAccessException {
+			throws Exception {
 		if (object.object() == null || !object.object().isJsonArray())
 			throw new FileException("Invalid JSON file \"" + object.jsonFile() + "\", expected array (" + object + ")");
 

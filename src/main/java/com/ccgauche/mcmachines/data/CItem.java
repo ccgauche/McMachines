@@ -73,7 +73,7 @@ public class CItem {
 	@NotNull
 	public ItemStack asStack(int amount, @Nullable DataCompound map) {
 		if (id != null) {
-			return Objects.requireNonNull(ItemRegistry.getItem(id)).create(amount, map);
+			return ItemRegistry.getItemOrCrash(id).create(amount, map);
 		} else {
 			return new ItemStack(vanilla);
 		}

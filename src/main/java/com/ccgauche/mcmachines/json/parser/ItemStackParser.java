@@ -11,7 +11,7 @@ import net.minecraft.item.ItemStack;
 public class ItemStackParser {
 
 	@NotNull
-	public static ItemStack parse(@NotNull JSONContext object) throws FileException {
+	public static ItemStack parse(@NotNull JSONContext object) throws Exception {
 		if (object.object() == null) {
 			throw new FileException("Invalid ItemStack found null " + object.jsonFile());
 		}

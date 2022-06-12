@@ -13,7 +13,7 @@ import net.minecraft.util.registry.Registry;
 public class ItemParser {
 
 	@NotNull
-	public static CItem parse(@NotNull JSONContext object) throws FileException {
+	public static CItem parse(@NotNull JSONContext object) throws Exception {
 		var k2 = StringParser.parse(object);
 		if (!k2.contains(":"))
 			throw new FileException(

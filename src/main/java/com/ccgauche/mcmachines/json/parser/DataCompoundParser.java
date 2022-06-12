@@ -12,7 +12,7 @@ import com.google.gson.JsonElement;
 public class DataCompoundParser {
 
 	@NotNull
-	public static DataCompound parse(@NotNull JSONContext object) throws FileException {
+	public static DataCompound parse(@NotNull JSONContext object) throws Exception {
 		if (object.object() == null || !object.object().isJsonObject()) {
 			throw new FileException(
 					"Invalid JSON file \"" + object.jsonFile() + "\", invalid DataCompound (" + object + ")");

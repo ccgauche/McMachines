@@ -14,7 +14,7 @@ public class ListParser {
 
 	@NotNull
 	public static <T> List<T> parse(@NotNull JSONContext object, @NotNull FunctionThrow<JSONContext, T> func)
-			throws FileException, NoSuchFieldException, InstantiationException, IllegalAccessException {
+			throws Exception {
 		if (object.object() == null || !object.object().isJsonArray())
 			throw new FileException("Invalid JSON file \"" + object.jsonFile() + "\", expected array (" + object + ")");
 
@@ -28,7 +28,7 @@ public class ListParser {
 
 	@NotNull
 	public static <T> List<T> parseOrPlain(@NotNull JSONContext object, @NotNull FunctionThrow<JSONContext, T> func)
-			throws FileException, NoSuchFieldException, InstantiationException, IllegalAccessException {
+			throws Exception {
 		if (object.object() != null && object.object().isJsonArray()) {
 			return parse(object, func);
 		} else {

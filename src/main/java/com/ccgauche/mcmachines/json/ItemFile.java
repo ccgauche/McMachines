@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.ccgauche.mcmachines.data.Attribute;
 import com.ccgauche.mcmachines.data.CItem;
 import com.ccgauche.mcmachines.data.DataCompound;
 
@@ -21,6 +22,9 @@ public class ItemFile {
 
 	@NotNull
 	public Optional<DataCompound> properties;
+
+	@NotNull
+	public Optional<List<Attribute>> attributes;
 
 	@Override
 	public String toString() {
