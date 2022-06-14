@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.ccgauche.mcmachines.data.CItem;
 import com.ccgauche.mcmachines.data.IItem;
 import com.ccgauche.mcmachines.json.*;
 import com.ccgauche.mcmachines.json.recipe.IRecipe;
@@ -123,23 +124,25 @@ public class ExampleMod implements ModInitializer {
 
 	public static void loadMachineFile(String id, Machine machine) {
 		if (machine.mode == MachineMode.CONSTANT_GENERATOR) {
-			ConstantGeneratorTemplate impl = new ConstantGeneratorTemplate(id, machine.name,
-					machine.properties.orElse(null), machine.conditions.orElse(null));
+			ConstantGeneratorTemplate impl = new ConstantGeneratorTemplate(
+					machine.base.orElse(new CItem(Items.DROPPER)), id, machine.name, machine.properties.orElse(null),
+					machine.conditions.orElse(null));
 			MachineRegistry.add(impl);
 			ItemRegistry.addItem(impl.getRegistryItem());
 		} else if (machine.mode == MachineMode.BURNING_GENERATOR) {
-			BurningGeneratorTemplate impl = new BurningGeneratorTemplate(id, machine.name,
-					machine.properties.orElse(null), machine.conditions.orElse(null));
+			BurningGeneratorTemplate impl = new BurningGeneratorTemplate(machine.base.orElse(new CItem(Items.DROPPER)),
+					id, machine.name, machine.properties.orElse(null), machine.conditions.orElse(null));
 			MachineRegistry.add(impl);
 			ItemRegistry.addItem(impl.getRegistryItem());
 		} else if (machine.mode == MachineMode.SIMPLE_TRANSFORMER) {
-			SimpleTransformerTemplate impl = new SimpleTransformerTemplate(id, machine.name,
-					machine.properties.orElse(null), machine.conditions.orElse(null));
+			SimpleTransformerTemplate impl = new SimpleTransformerTemplate(
+					machine.base.orElse(new CItem(Items.DROPPER)), id, machine.name, machine.properties.orElse(null),
+					machine.conditions.orElse(null));
 			MachineRegistry.add(impl);
 			ItemRegistry.addItem(impl.getRegistryItem());
 		} else if (machine.mode == MachineMode.SIMPLE_CHARGER) {
-			SimpleChargerTemplate impl = new SimpleChargerTemplate(id, machine.name, machine.properties.orElse(null),
-					machine.conditions.orElse(null));
+			SimpleChargerTemplate impl = new SimpleChargerTemplate(machine.base.orElse(new CItem(Items.DROPPER)), id,
+					machine.name, machine.properties.orElse(null), machine.conditions.orElse(null));
 			MachineRegistry.add(impl);
 			ItemRegistry.addItem(impl.getRegistryItem());
 		}

@@ -62,6 +62,16 @@ public class CItem {
 		}
 	}
 
+	public @NotNull Item getItemOrCrash() {
+		if (vanilla != null) {
+			return vanilla;
+		} else {
+			if (id == null)
+				throw new RuntimeException("Id can't be null if vanilla is null");
+			return ItemRegistry.getItemOrCrash(id).material();
+		}
+	}
+
 	public @Nullable String getCustom() {
 		return id;
 	}

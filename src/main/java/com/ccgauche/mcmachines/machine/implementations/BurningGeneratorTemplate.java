@@ -7,6 +7,7 @@ import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.ccgauche.mcmachines.data.CItem;
 import com.ccgauche.mcmachines.data.DataCompound;
 import com.ccgauche.mcmachines.data.IItem;
 import com.ccgauche.mcmachines.json.conditions.ICondition;
@@ -18,8 +19,7 @@ import com.ccgauche.mcmachines.machine.IMachine;
 import com.ccgauche.mcmachines.registry.DataRegistry;
 import com.ccgauche.mcmachines.utils.ItemUtils;
 
-import net.minecraft.block.entity.DropperBlockEntity;
-import net.minecraft.item.Items;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -34,13 +34,13 @@ public class BurningGeneratorTemplate implements IMachine, ICraftingMachine {
 	@NotNull
 	private final IItem item;
 
-	public BurningGeneratorTemplate(@NotNull String id, @NotNull String name, @Nullable DataCompound properties,
-			@Nullable ICondition conditions) {
+	public BurningGeneratorTemplate(@NotNull CItem base, @NotNull String id, @NotNull String name,
+			@Nullable DataCompound properties, @Nullable ICondition conditions) {
 		this.id = id;
 		this.name = name;
 		this.properties = properties;
 		this.conditions = conditions;
-		item = new IItem.Basic(Items.DROPPER, this.name, this.id, this.properties, List.of(), List.of());
+		item = new IItem.Basic(base.getItemOrCrash(), this.name, this.id, this.properties, List.of(), List.of());
 	}
 
 	public String id() {
@@ -63,7 +63,7 @@ public class BurningGeneratorTemplate implements IMachine, ICraftingMachine {
 	public void tick(@NotNull DataCompound object, World world, BlockPos pos) {
 		if (world.isReceivingRedstonePower(pos))
 			return;
-		DropperBlockEntity furnaceBlock = (DropperBlockEntity) world.getBlockEntity(pos);
+		Inventory furnaceBlock = (Inventory) world.getBlockEntity(pos);
 		Cable.applyCableTransform(pos, world);
 		if (conditions != null && !conditions.isTrue(this, (ServerWorld) world, pos, object)) {
 			return;

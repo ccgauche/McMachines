@@ -11,9 +11,7 @@ import com.ccgauche.mcmachines.json.Dual;
 
 import net.minecraft.block.dispenser.DispenserBehavior;
 import net.minecraft.block.dispenser.ItemDispenserBehavior;
-import net.minecraft.block.entity.DropperBlockEntity;
 import net.minecraft.block.entity.HopperBlockEntity;
-import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -53,7 +51,7 @@ public class ItemUtils {
 		}
 	}
 
-	public static boolean containsEnoughItem(CItem cItem, int number, DropperBlockEntity inv) {
+	public static boolean containsEnoughItem(CItem cItem, int number, Inventory inv) {
 		for (int i = 0; i < 9; i++) {
 			ItemStack item = inv.getStack(i);
 			if (item == null || item.getItem() == null || item.isEmpty())
@@ -69,7 +67,7 @@ public class ItemUtils {
 		return false;
 	}
 
-	public static void removeItem(CItem cItem, int number, DropperBlockEntity inv) {
+	public static void removeItem(CItem cItem, int number, Inventory inv) {
 		for (int i = 0; i < 9; i++) {
 			ItemStack item = inv.getStack(i);
 			if (item == null || item.getItem() == null || item.isEmpty())
@@ -98,7 +96,7 @@ public class ItemUtils {
 		}
 	}
 
-	public static boolean removeItem(LootableContainerBlockEntity blockEntity, int slot, int n) {
+	public static boolean removeItem(Inventory blockEntity, int slot, int n) {
 		int count = blockEntity.getStack(slot).getCount();
 		if (count < n) {
 			return false;

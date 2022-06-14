@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.ccgauche.mcmachines.data.CItem;
 import com.ccgauche.mcmachines.data.DataCompound;
 import com.ccgauche.mcmachines.json.conditions.ICondition;
 
@@ -12,6 +13,8 @@ public class Machine {
 
 	@NotNull
 	public String name;
+	@NotNull
+	public Optional<CItem> base;
 
 	@NotNull
 	public MachineMode mode;

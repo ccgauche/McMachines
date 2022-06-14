@@ -6,6 +6,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.ccgauche.mcmachines.data.CItem;
 import com.ccgauche.mcmachines.data.DataCompound;
 import com.ccgauche.mcmachines.data.IItem;
 import com.ccgauche.mcmachines.json.conditions.ICondition;
@@ -16,8 +17,7 @@ import com.ccgauche.mcmachines.machine.IMachine;
 import com.ccgauche.mcmachines.registry.DataRegistry;
 import com.ccgauche.mcmachines.utils.ItemUtils;
 
-import net.minecraft.block.entity.DropperBlockEntity;
-import net.minecraft.item.Items;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -34,13 +34,13 @@ public class SimpleTransformerTemplate implements IMachine, ICraftingMachine {
 	@NotNull
 	private final IItem item;
 
-	public SimpleTransformerTemplate(@NotNull String id, @NotNull String name, @Nullable DataCompound properties,
-			@Nullable ICondition conditions) {
+	public SimpleTransformerTemplate(@NotNull CItem base, @NotNull String id, @NotNull String name,
+			@Nullable DataCompound properties, @Nullable ICondition conditions) {
 		this.id = id;
 		this.name = name;
 		this.properties = properties;
 		this.conditions = conditions;
-		item = new IItem.Basic(Items.DROPPER, this.name, this.id, this.properties, List.of(), List.of());
+		item = new IItem.Basic(base.getItemOrCrash(), this.name, this.id, this.properties, List.of(), List.of());
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class SimpleTransformerTemplate implements IMachine, ICraftingMachine {
 
 	@Override
 	public void tick(@NotNull DataCompound object, World world, BlockPos pos) {
-		DropperBlockEntity furnaceBlock = (DropperBlockEntity) world.getBlockEntity(pos);
+		Inventory furnaceBlock = (Inventory) world.getBlockEntity(pos);
 		if (furnaceBlock == null)
 			return;
 		if (world.isReceivingRedstonePower(pos))
