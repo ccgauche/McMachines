@@ -8,6 +8,9 @@ import com.ccgauche.mcmachines.ExampleMod;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 
+/*
+A util class copied from minecraft source code.
+ */
 public class Attribute {
 
 	public AttributeType type;

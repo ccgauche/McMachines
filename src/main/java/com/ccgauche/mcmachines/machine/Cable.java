@@ -14,7 +14,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
-public class Cable implements IMachine {
+/**
+ * Simple machines that can be used to transfer energy.
+ */
+public class Cable extends IMachine {
 
 	private static final Cable instance = new Cable();
 
@@ -37,7 +40,7 @@ public class Cable implements IMachine {
 
 	@Override
 	public void place(World world, BlockPos pos, DataCompound properties) {
-		IMachine.super.place(world, pos, properties);
+		super.place(world, pos, properties);
 		System.out.println(world.getBlockState(pos).getBlock());
 		Integer[] b = materials.get(world.getBlockState(pos).getBlock());
 		if (b == null)

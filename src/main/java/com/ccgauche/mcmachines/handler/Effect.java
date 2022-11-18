@@ -17,6 +17,9 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+/**
+ * The effect handler enables plugins to add effects to items, players, etc.
+ */
 public class Effect implements PlayerTickListener {
 
 	public int duration = 0;

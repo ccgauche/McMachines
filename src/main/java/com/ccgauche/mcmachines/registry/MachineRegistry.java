@@ -10,6 +10,9 @@ import com.ccgauche.mcmachines.machine.Cable;
 import com.ccgauche.mcmachines.machine.ICraftingMachine;
 import com.ccgauche.mcmachines.machine.IMachine;
 
+/**
+ * The registry in which all machines are stored
+ */
 public final class MachineRegistry {
 
 	@NotNull

@@ -1,6 +1,5 @@
 package com.ccgauche.mcmachines.handler;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,33 +24,21 @@ public class Registry {
 	}
 
 	public static void addListeners(IItem item) {
-		for (String handlercommand : item.handlers()) {
-			String handlername = handlercommand.split(":")[0];
-			String handlerargument = (handlercommand.contains(":") ? handlercommand.substring(handlername.length() + 1)
-					: "").trim();
-			handlername = handlername.trim();
-			Listener listener = listeners.get(handlername);
-			if (listener == null) {
-				System.out.println("Handler " + handlername + " doesn't exist");
-				System.exit(0);
-				return;
-			}
-			listener = listener.derive(handlerargument);
-			boolean k = true;
-			if (listener instanceof BlockInteractListener lst) {
-				k = false;
-				blockInteract.putIfAbsent(item.id(), new ArrayList<>());
-				blockInteract.get(item.id()).add(lst);
-			}
-			if (listener instanceof PlayerTickListener lst) {
-				k = false;
-				playerTick.putIfAbsent(item.id(), new ArrayList<>());
-				playerTick.get(item.id()).add(lst);
-			}
-			if (k) {
-				System.out.println("Unknown listener type");
-			}
-		}
+		/*
+		 * for (String handlercommand : item.handlers()) { String handlername =
+		 * handlercommand.split(":")[0]; String handlerargument =
+		 * (handlercommand.contains(":") ? handlercommand.substring(handlername.length()
+		 * + 1) : "").trim(); handlername = handlername.trim(); Listener listener =
+		 * listeners.get(handlername); if (listener == null) {
+		 * System.out.println("Handler " + handlername + " doesn't exist");
+		 * System.exit(0); return; } listener = listener.derive(handlerargument);
+		 * boolean k = true; if (listener instanceof BlockInteractListener lst) { k =
+		 * false; blockInteract.putIfAbsent(item.id(), new ArrayList<>());
+		 * blockInteract.get(item.id()).add(lst); } if (listener instanceof
+		 * PlayerTickListener lst) { k = false; playerTick.putIfAbsent(item.id(), new
+		 * ArrayList<>()); playerTick.get(item.id()).add(lst); } if (k) {
+		 * System.out.println("Unknown listener type"); } }
+		 */
 	}
 
 	public static final Map<String, List<BlockInteractListener>> blockInteract = new HashMap<>();

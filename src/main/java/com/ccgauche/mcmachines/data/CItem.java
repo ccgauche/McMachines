@@ -7,15 +7,28 @@ import org.jetbrains.annotations.Nullable;
 
 import com.ccgauche.mcmachines.registry.ItemRegistry;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
+/**
+ * An item that can represent both minecraft items and custom items
+ */
 public class CItem {
 
+	/**
+	 * The material of the item if vanilla
+	 */
 	@Nullable
 	private final Item vanilla;
+
+	/**
+	 * The id of the item if custom
+	 */
 	@Nullable
 	private final String id;
 
@@ -25,8 +38,13 @@ public class CItem {
 	}
 
 	public CItem(@NotNull String id) {
-		this.vanilla = null;
-		this.id = id;
+		if (id.startsWith(":") || id.startsWith("minecraft:")) {
+			this.vanilla = Registry.ITEM.get(new Identifier("minecraft", id.split(":")[1]));
+			this.id = null;
+		} else {
+			this.vanilla = null;
+			this.id = id;
+		}
 	}
 
 	public CItem(@NotNull ItemStack itemStack) {
@@ -80,6 +98,9 @@ public class CItem {
 		return id != null;
 	}
 
+	/**
+	 * @return The item stack of the item
+	 */
 	@NotNull
 	public ItemStack asStack(int amount, @Nullable DataCompound map) {
 		if (id != null) {
@@ -110,6 +131,12 @@ public class CItem {
 	public boolean equals(Object o) {
 		if (this == o)
 			return true;
+		if (o instanceof Item item) {
+			return Objects.equals(vanilla, item) && Objects.equals(id, null);
+		}
+		if (o instanceof Block block) {
+			return Objects.equals(vanilla, block.asItem()) && Objects.equals(id, null);
+		}
 		if (o == null || getClass() != o.getClass())
 			return false;
 		CItem cItem = (CItem) o;

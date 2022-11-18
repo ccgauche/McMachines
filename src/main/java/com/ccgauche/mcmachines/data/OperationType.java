@@ -1,5 +1,8 @@
 package com.ccgauche.mcmachines.data;
 
+/**
+ * From minecraft source code
+ */
 public enum OperationType {
 	Add(0), AddMultiply(1), MultiplyMultiply(2);
 

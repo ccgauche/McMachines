@@ -5,11 +5,17 @@ import com.ccgauche.mcmachines.handler.events.BlockInteractListener;
 import com.ccgauche.mcmachines.registry.DataRegistry;
 import com.ccgauche.mcmachines.utils.TextUtils;
 
+/**
+ * The atomic disassembler is a tool that can be used to disassemble machines
+ * and blocks instantly using energy.
+ */
 public class AtomicDisassembler implements BlockInteractListener {
 	@Override
 	public boolean onInteract(BlockInteract blockInteract) {
 		DataCompound compound = new DataCompound(blockInteract.stack());
 		int hardness = (int) Math.ceil(blockInteract.getBlockState().getHardness(null, null));
+		// TODO: Add a config option to change the amount of energy needed to
+		// disassemble
 		if (hardness < 0 || hardness > 24000) {
 			blockInteract.player().sendMessage(TextUtils.from("§cCan't break this block type"), true);
 			return false;

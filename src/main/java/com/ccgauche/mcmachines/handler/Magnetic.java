@@ -12,6 +12,10 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Box;
 
+/**
+ * The magnetic handler enables plugins to add magnetic effects to items,
+ * players,
+ */
 public class Magnetic implements PlayerTickListener {
 	@Override
 	public String handlerId() {

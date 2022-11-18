@@ -18,6 +18,9 @@ import net.minecraft.nbt.NbtInt;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.text.Text;
 
+/**
+ * Represents a collection of data that can be applied to items and machines.
+ */
 public class DataCompound {
 
 	@NotNull

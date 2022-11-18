@@ -1,5 +1,6 @@
 package com.ccgauche.mcmachines.machine.implementations;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -9,31 +10,36 @@ import org.jetbrains.annotations.Nullable;
 import com.ccgauche.mcmachines.data.CItem;
 import com.ccgauche.mcmachines.data.DataCompound;
 import com.ccgauche.mcmachines.data.IItem;
-import com.ccgauche.mcmachines.json.conditions.ICondition;
 import com.ccgauche.mcmachines.machine.Cable;
 import com.ccgauche.mcmachines.machine.IMachine;
 import com.ccgauche.mcmachines.registry.DataRegistry;
+import com.ccgauche.mcmachines.registry.events.MachineTickListener;
 
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public final class ConstantGeneratorTemplate implements IMachine {
+/**
+ * A machine that generate energy each tick
+ */
+public final class ConstantGeneratorTemplate extends IMachine {
 	private final @NotNull String id;
 	private final @NotNull String name;
 	private final @Nullable DataCompound properties;
-	private final @Nullable ICondition conditions;
+	private final @NotNull List<MachineTickListener> conditions = new ArrayList<>();
 
 	@NotNull
 	private final IItem item;
 
 	public ConstantGeneratorTemplate(@NotNull CItem base, @NotNull String id, @NotNull String name,
-			@Nullable DataCompound properties, @Nullable ICondition conditions) {
+			@Nullable DataCompound properties) {
 		this.id = id;
 		this.name = name;
 		this.properties = properties;
-		this.conditions = conditions;
-		item = new IItem.Basic(base.getItemOrCrash(), this.name, this.id, this.properties, List.of(), List.of());
+		item = new IItem.Basic(base.getItemOrCrash(), this.name, this.id, this.properties, List.of());
+	}
+
+	public void addCondition(MachineTickListener listener) {
+		conditions.add(listener);
 	}
 
 	public String id() {
@@ -47,7 +53,7 @@ public final class ConstantGeneratorTemplate implements IMachine {
 
 	@Override
 	public void place(World world, BlockPos pos, DataCompound properties) {
-		IMachine.super.place(world, pos, properties);
+		super.place(world, pos, properties);
 		DataRegistry.write(world, pos, this.properties);
 		DataRegistry.write(world, pos, properties);
 	}
@@ -55,13 +61,13 @@ public final class ConstantGeneratorTemplate implements IMachine {
 	@Override
 	public void tick(@NotNull DataCompound object, World world, BlockPos pos) {
 		Cable.applyCableTransform(pos, world);
-		if (conditions != null && !conditions.isTrue(this, (ServerWorld) world, pos, object)) {
+		if (!conditions.stream().allMatch(e -> e.tick(world, pos, object))) {
 			return;
 		}
-		int max = DataRegistry.ENERGY_MAX.getOrDefault(world, pos, 0);
-		int energy = DataRegistry.ENERGY_CONTENT.getOrDefault(world, pos, 0);
-		DataRegistry.ENERGY_CONTENT.set(world, pos,
-				Math.min(max, energy + DataRegistry.GEN_PER_TICK.getOrDefault(world, pos, 0)));
+		int max = DataRegistry.ENERGY_MAX.getOrDefault(object, 0);
+		int energy = DataRegistry.ENERGY_CONTENT.getOrDefault(object, 0);
+		DataRegistry.ENERGY_CONTENT.set(object,
+				Math.min(max, energy + DataRegistry.GEN_PER_TICK.getOrDefault(object, 0)));
 	}
 
 	public @NotNull String name() {
@@ -72,7 +78,7 @@ public final class ConstantGeneratorTemplate implements IMachine {
 		return properties;
 	}
 
-	public @Nullable ICondition conditions() {
+	public @NotNull List<MachineTickListener> conditions() {
 		return conditions;
 	}
 

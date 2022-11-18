@@ -27,11 +27,22 @@ import net.minecraft.util.math.Direction;
 
 public class ItemUtils {
 
-	public static BlockPos getBlockFacing(Direction dir, BlockPos pos) {
+	/**
+	 * @param dir The direction
+	 * @param pos The position of the current block
+	 * @return The position of the block in front of the current block accordingly
+	 *         to the direction
+	 */
+	@NotNull
+	public static BlockPos getBlockFacing(@NotNull Direction dir, @NotNull BlockPos pos) {
 		return new BlockPos(dir.getOffsetX() + pos.getX(), dir.getOffsetY() + pos.getY(),
 				dir.getOffsetZ() + pos.getZ());
 	}
 
+	/**
+	 * Copied from the DispenserBlock class in the minecraft source code to be able
+	 * to dispense items
+	 */
 	private static final DispenserBehavior BEHAVIOR = new ItemDispenserBehavior();
 
 	public static void dispense(ServerWorld world, BlockPos pos, ItemStack itemStack) {
@@ -47,10 +58,18 @@ public class ItemUtils {
 			itemStack2 = HopperBlockEntity.transfer(null, inventory, itemStack.copy(), direction.getOpposite());
 		}
 		if (itemStack2 != null && !itemStack2.isEmpty()) {
+			// Use an empty behavior to dispense the item without any loot-table attached
 			BEHAVIOR.dispense(blockPointerImpl, itemStack);
 		}
 	}
 
+	/**
+	 *
+	 * @param cItem  The custom item
+	 * @param number The number of items
+	 * @param inv    The inventory
+	 * @return Weather there is enough items of the given type in the inventory
+	 */
 	public static boolean containsEnoughItem(CItem cItem, int number, Inventory inv) {
 		for (int i = 0; i < 9; i++) {
 			ItemStack item = inv.getStack(i);
@@ -67,6 +86,13 @@ public class ItemUtils {
 		return false;
 	}
 
+	/**
+	 *
+	 * @param cItem  The custom item
+	 * @param number The number of items
+	 * @param inv    The inventory Removes the given number of items of the given
+	 *               type from the inventory
+	 */
 	public static void removeItem(CItem cItem, int number, Inventory inv) {
 		for (int i = 0; i < 9; i++) {
 			ItemStack item = inv.getStack(i);
@@ -84,6 +110,13 @@ public class ItemUtils {
 		}
 	}
 
+	/**
+	 * Drop items in the world
+	 *
+	 * @param world   The world
+	 * @param pos     The position of the block
+	 * @param outputs The outputs to drop in the world
+	 */
 	public static void outputItems(ServerWorld world, BlockPos pos, List<Dual<ItemStack, Integer>> outputs) {
 		for (var toDrop : outputs) {
 			ItemStack stack = toDrop.first().copy();
@@ -96,18 +129,30 @@ public class ItemUtils {
 		}
 	}
 
-	public static boolean removeItem(Inventory blockEntity, int slot, int n) {
-		int count = blockEntity.getStack(slot).getCount();
+	/**
+	 *
+	 * @param inv  The inventory
+	 * @param slot The slot
+	 * @param n    The number of items to remove Removes the given number of items
+	 *             from the given slot
+	 */
+	public static boolean removeItem(Inventory inv, int slot, int n) {
+		int count = inv.getStack(slot).getCount();
 		if (count < n) {
 			return false;
 		}
 		if (count == n)
-			blockEntity.removeStack(slot);
+			inv.removeStack(slot);
 		else
-			blockEntity.removeStack(slot, n);
+			inv.removeStack(slot, n);
 		return true;
 	}
 
+	/**
+	 *
+	 * @param i        The item
+	 * @param loreText The lore text Sets the lore of the given item
+	 */
 	public static boolean setLore(@NotNull ItemStack i, @Nullable List<Text> loreText) {
 		NbtCompound display = i.getOrCreateSubNbt("display");
 		if (display != null) {

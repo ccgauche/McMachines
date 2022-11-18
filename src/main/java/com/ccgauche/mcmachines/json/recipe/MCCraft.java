@@ -23,11 +23,14 @@ import net.minecraft.util.collection.DefaultedList;
 public class MCCraft implements IRecipe {
 
 	@NotNull
-	public String on;
+	public final ItemStack output;
 	@NotNull
-	public ItemStack output;
-	@NotNull
-	public List<@NotNull List<@Nullable CItem>> inputs;
+	public final List<@NotNull List<@Nullable CItem>> inputs;
+
+	public MCCraft(@NotNull ItemStack output, @NotNull List<@NotNull List<@Nullable CItem>> inputs) {
+		this.output = output;
+		this.inputs = inputs;
+	}
 
 	public void register(Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> map2) {
 		var recipe = create();
@@ -55,10 +58,5 @@ public class MCCraft implements IRecipe {
 		ExampleMod.KKK++;
 		return new ShapedRecipe(new Identifier("abcdefg", "a" + ExampleMod.KKK), "", width, height,
 				DefaultedList.copyOf(Ingredient.EMPTY, items), output);
-	}
-
-	@Override
-	public String on() {
-		return on;
 	}
 }

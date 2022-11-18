@@ -12,6 +12,10 @@ import com.google.common.primitives.Ints;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
+/**
+ * Used to encode and decode data as binary streams. Used while saving and
+ * loading .dat files.
+ */
 public class Encoder {
 
 	public static void encodeString(String s, OutputStream stream) throws IOException {

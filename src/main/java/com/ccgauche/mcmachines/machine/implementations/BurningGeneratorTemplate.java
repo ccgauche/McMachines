@@ -10,7 +10,6 @@ import org.jetbrains.annotations.Nullable;
 import com.ccgauche.mcmachines.data.CItem;
 import com.ccgauche.mcmachines.data.DataCompound;
 import com.ccgauche.mcmachines.data.IItem;
-import com.ccgauche.mcmachines.json.conditions.ICondition;
 import com.ccgauche.mcmachines.json.recipe.GeneratorCraft;
 import com.ccgauche.mcmachines.json.recipe.IRecipe;
 import com.ccgauche.mcmachines.machine.Cable;
@@ -24,23 +23,27 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class BurningGeneratorTemplate implements IMachine, ICraftingMachine {
+/**
+ * A machine that generate energy from fuel
+ */
+public class BurningGeneratorTemplate extends IMachine implements ICraftingMachine {
+
 	private final List<GeneratorCraft> crafts = new ArrayList<>();
 	private final @NotNull String id;
 	private final @NotNull String name;
 	private final @Nullable DataCompound properties;
-	private final @Nullable ICondition conditions;
+	// private final @Nullable ICondition conditions;
 
 	@NotNull
 	private final IItem item;
 
 	public BurningGeneratorTemplate(@NotNull CItem base, @NotNull String id, @NotNull String name,
-			@Nullable DataCompound properties, @Nullable ICondition conditions) {
+			@Nullable DataCompound properties/* , @Nullable ICondition conditions */) {
 		this.id = id;
 		this.name = name;
 		this.properties = properties;
-		this.conditions = conditions;
-		item = new IItem.Basic(base.getItemOrCrash(), this.name, this.id, this.properties, List.of(), List.of());
+		// this.conditions = conditions;
+		item = new IItem.Basic(base.getItemOrCrash(), this.name, this.id, this.properties, List.of());
 	}
 
 	public String id() {
@@ -54,7 +57,7 @@ public class BurningGeneratorTemplate implements IMachine, ICraftingMachine {
 
 	@Override
 	public void place(World world, BlockPos pos, DataCompound properties) {
-		IMachine.super.place(world, pos, properties);
+		super.place(world, pos, properties);
 		DataRegistry.write(world, pos, this.properties);
 		DataRegistry.write(world, pos, properties);
 	}
@@ -65,33 +68,33 @@ public class BurningGeneratorTemplate implements IMachine, ICraftingMachine {
 			return;
 		Inventory furnaceBlock = (Inventory) world.getBlockEntity(pos);
 		Cable.applyCableTransform(pos, world);
-		if (conditions != null && !conditions.isTrue(this, (ServerWorld) world, pos, object)) {
-			return;
-		}
-		int burningTicks = DataRegistry.GEN_REMAINING_SECS.getOrDefault(world, pos, 0);
-		int genPerTick = DataRegistry.GEN_PER_TICK.getOrDefault(world, pos, 0);
+		int burningTicks = DataRegistry.GEN_REMAINING_SECS.getOrDefault(object, 0);
+		int genPerTick = DataRegistry.GEN_PER_TICK.getOrDefault(object, 0);
 		if (burningTicks > 0) {
-			int max = DataRegistry.ENERGY_MAX.getOrDefault(world, pos, 0);
-			int energy = DataRegistry.ENERGY_CONTENT.getOrDefault(world, pos, 0);
+			int max = DataRegistry.ENERGY_MAX.getOrDefault(object, 0);
+			int energy = DataRegistry.ENERGY_CONTENT.getOrDefault(object, 0);
 			if (max < energy + genPerTick)
 				return;
-			DataRegistry.ENERGY_CONTENT.set(world, pos, Math.min(max, energy + genPerTick));
-			DataRegistry.GEN_REMAINING_SECS.set(world, pos, burningTicks - 1);
+			DataRegistry.ENERGY_CONTENT.set(object, Math.min(max, energy + genPerTick));
+			DataRegistry.GEN_REMAINING_SECS.set(object, burningTicks - 1);
 			return;
 		}
+
+		burningTicks = DataRegistry.GEN_REMAINING_SECS.getOrDefault(object, 0);
+		if (burningTicks > 0)
+			return;
 		for (var craft : crafts) {
 			if (!craft.inputs.stream()
 					.allMatch(e -> ItemUtils.containsEnoughItem(e.first(), e.second(), furnaceBlock))) {
 				continue;
 			}
-			if (!craft.conditions.map(e -> e.isTrue(this, (ServerWorld) world, pos, object)).orElse(true)) {
+			if (!craft.preCraft.stream().allMatch(e -> e.tick(world, pos, object))) {
 				continue;
 			}
-			craft.inputs.forEach(e -> ItemUtils.removeItem(e.first(), e.second(), furnaceBlock));
-			DataRegistry.GEN_REMAINING_SECS.set(world, pos, craft.tick_duration);
-			DataRegistry.GEN_PER_TICK.set(world, pos, craft.energy_production);
+			DataRegistry.GEN_REMAINING_SECS.set(object, craft.tick_duration);
+			DataRegistry.GEN_PER_TICK.set(object, craft.energy_production);
 			ItemUtils.outputItems((ServerWorld) world, pos, craft.outputs);
-			craft.post_craft.ifPresent(e -> e.isTrue(this, (ServerWorld) world, pos, object));
+			craft.postCraft.forEach(e -> e.tick(world, pos, object));
 			break;
 		}
 	}
@@ -104,9 +107,9 @@ public class BurningGeneratorTemplate implements IMachine, ICraftingMachine {
 		return properties;
 	}
 
-	public @Nullable ICondition conditions() {
-		return conditions;
-	}
+	/*
+	 * public @Nullable ICondition conditions() { return conditions; }
+	 */
 
 	@Override
 	public boolean equals(Object obj) {
@@ -116,18 +119,19 @@ public class BurningGeneratorTemplate implements IMachine, ICraftingMachine {
 			return false;
 		var that = (BurningGeneratorTemplate) obj;
 		return Objects.equals(this.id, that.id) && Objects.equals(this.name, that.name)
-				&& Objects.equals(this.properties, that.properties) && Objects.equals(this.conditions, that.conditions);
+				&& Objects.equals(this.properties,
+						that.properties)/* && Objects.equals(this.conditions, that.conditions) */;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, name, properties, conditions);
+		return Objects.hash(id, name, properties/* , conditions */);
 	}
 
 	@Override
 	public String toString() {
 		return "ConstantGeneratorTemplate[" + "id=" + id + ", " + "name=" + name + ", " + "properties=" + properties
-				+ ", " + "conditions=" + conditions + ']';
+		/* + ", " + "conditions=" + conditions */ + ']';
 	}
 
 	@Override

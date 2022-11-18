@@ -3,6 +3,8 @@ package com.ccgauche.mcmachines.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.Texts;
@@ -10,7 +12,12 @@ import net.minecraft.util.Formatting;
 
 public class TextUtils {
 
-	public static Text from(String s) {
+	/**
+	 * @param s The string to be formatted
+	 * @return The formatted string
+	 */
+	@NotNull
+	public static Text from(@NotNull String s) {
 		List<Text> texts = new ArrayList<>();
 		List<Formatting> formattingList = new ArrayList<>();
 		boolean formatting = false;

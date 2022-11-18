@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Objects;
 
 import org.apache.commons.io.FileUtils;
@@ -13,18 +13,11 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.ccgauche.mcmachines.data.CItem;
 import com.ccgauche.mcmachines.data.IItem;
-import com.ccgauche.mcmachines.json.*;
-import com.ccgauche.mcmachines.json.recipe.IRecipe;
-import com.ccgauche.mcmachines.machine.implementations.BurningGeneratorTemplate;
-import com.ccgauche.mcmachines.machine.implementations.ConstantGeneratorTemplate;
-import com.ccgauche.mcmachines.machine.implementations.SimpleChargerTemplate;
-import com.ccgauche.mcmachines.machine.implementations.SimpleTransformerTemplate;
-import com.ccgauche.mcmachines.registry.CraftRegistry;
+import com.ccgauche.mcmachines.lang.Context;
+import com.ccgauche.mcmachines.lang.Engine;
 import com.ccgauche.mcmachines.registry.DataRegistry;
 import com.ccgauche.mcmachines.registry.ItemRegistry;
-import com.ccgauche.mcmachines.registry.MachineRegistry;
 
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.item.Item;
@@ -41,19 +34,15 @@ public class ExampleMod implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		// Engine.main();
 		try {
 			DataRegistry.load(new File("machines.dat"));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		// This code runs as soon as Minecraft is in a mod-load-ready state.
-		// However, some things (like resources) may still be uninitialized.
-		// Proceed with mild caution.
-
-		LOGGER.info("Hello Fabric world!");
 		try {
 			loadFiles();
-		} catch (FileNotFoundException | FileException | NoSuchFieldException | InstantiationException
+		} catch (FileNotFoundException | NoSuchFieldException | InstantiationException
 				| IllegalAccessException e) {
 			System.out.println("Message: " + e.getMessage());
 			throw new RuntimeException(e);
@@ -66,6 +55,10 @@ public class ExampleMod implements ModInitializer {
 		}
 	}
 
+	/*
+	 * This method is used to load all the files in the "machines" folder (Only for
+	 * textures).
+	 */
 	public static void crawlUntilFolder(String name, File folder, @Nullable String modname,
 			ExceptionConsumer consumer) {
 		if (!folder.exists())
@@ -90,68 +83,61 @@ public class ExampleMod implements ModInitializer {
 		}
 	}
 
+	/*
+	 * This method tries to load all the executable files in the "machines" folder
+	 * (ending with .rs).
+	 */
+	public static void getExecutables(File folder, ExceptionConsumer consumer) {
+		if (!folder.exists())
+			folder.mkdirs();
+		for (File f1 : Objects.requireNonNull(folder.listFiles())) {
+			if (f1.isDirectory()) {
+
+				getExecutables(f1, consumer);
+
+			} else if (f1.getName().endsWith(".rs")) {
+				try {
+					consumer.run("", f1);
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+		}
+	}
+
+	/*
+	 * Interface used to throw exceptions in lambdas. Only used in this class.
+	 */
 	interface ExceptionConsumer {
 
 		void run(@NotNull String modName, @NotNull File file) throws Exception;
 	}
 
-	public static void loadFiles() throws FileNotFoundException, FileException, NoSuchFieldException,
-			InstantiationException, IllegalAccessException {
-		crawlUntilFolder("items", new File("pack/mods"), null, (mod, file) -> {
-			String id = mod + ":" + file.getName().split("\\.")[0];
-			loadItemFile((ItemFile) DParser.parse(ItemFile.class.getTypeName(), DParser.readFile(file)), id);
-			System.out.println("Item " + id + " loaded");
-		});
-		crawlUntilFolder("machines", new File("pack/mods"), null, (mod, file) -> {
-			String id = mod + ":" + file.getName().split("\\.")[0];
-			loadMachineFile(id, (Machine) DParser.parse(Machine.class.getTypeName(), DParser.readFile(file)));
-			System.out.println("Machine " + id + " loaded");
-		});
-		crawlUntilFolder("crafts", new File("pack/mods"), null, (mod, file) -> {
-			loadCraftFile(IRecipe.parse(DParser.readFile(file)));
-			System.out.println("Craft loaded: " + file);
+	/*
+	 * Loads the textures and the executable files.
+	 */
+	public static void loadFiles()
+			throws FileNotFoundException, NoSuchFieldException, InstantiationException, IllegalAccessException {
+		Context ctx = new Context(new HashMap<>(2048));
+		Engine.loadDefaults(ctx);
+		getExecutables(new File("pack/mods"), (modName, file) -> {
+			ctx.execute(file);
 		});
 	}
 
-	public static void loadItemFile(ItemFile item, String id) {
-		ItemRegistry.addItem(new IItem.Basic(Objects.requireNonNull(item.base.getItem()), item.name, id,
-				item.properties.orElse(null), item.handler.orElse(List.of()), item.attributes.orElse(List.of())));
-	}
-
-	public static void loadCraftFile(IRecipe recipe) {
-		Objects.requireNonNull(CraftRegistry.get(recipe.on())).bindCraftModel(recipe);
-	}
-
-	public static void loadMachineFile(String id, Machine machine) {
-		if (machine.mode == MachineMode.CONSTANT_GENERATOR) {
-			ConstantGeneratorTemplate impl = new ConstantGeneratorTemplate(
-					machine.base.orElse(new CItem(Items.DROPPER)), id, machine.name, machine.properties.orElse(null),
-					machine.conditions.orElse(null));
-			MachineRegistry.add(impl);
-			ItemRegistry.addItem(impl.getRegistryItem());
-		} else if (machine.mode == MachineMode.BURNING_GENERATOR) {
-			BurningGeneratorTemplate impl = new BurningGeneratorTemplate(machine.base.orElse(new CItem(Items.DROPPER)),
-					id, machine.name, machine.properties.orElse(null), machine.conditions.orElse(null));
-			MachineRegistry.add(impl);
-			ItemRegistry.addItem(impl.getRegistryItem());
-		} else if (machine.mode == MachineMode.SIMPLE_TRANSFORMER) {
-			SimpleTransformerTemplate impl = new SimpleTransformerTemplate(
-					machine.base.orElse(new CItem(Items.DROPPER)), id, machine.name, machine.properties.orElse(null),
-					machine.conditions.orElse(null));
-			MachineRegistry.add(impl);
-			ItemRegistry.addItem(impl.getRegistryItem());
-		} else if (machine.mode == MachineMode.SIMPLE_CHARGER) {
-			SimpleChargerTemplate impl = new SimpleChargerTemplate(machine.base.orElse(new CItem(Items.DROPPER)), id,
-					machine.name, machine.properties.orElse(null), machine.conditions.orElse(null));
-			MachineRegistry.add(impl);
-			ItemRegistry.addItem(impl.getRegistryItem());
-		}
-	}
-
+	/*
+	 * Creates a texture pack with all the textures in the "pack" folder.
+	 */
 	@SuppressWarnings("ResultOfMethodCallIgnored")
 	public static void createTexturePack() throws IOException {
 		new File("pack/GeneratedPack/").delete();
+		// We are using McPatcher to apply the custom textures. So we need to place
+		// everything in the "mcpatcher/cit" folder.
 		new File("pack/GeneratedPack/assets/minecraft/mcpatcher/cit/").mkdirs();
+		/*
+		 * Creates the manifest file for the texture pack.
+		 */
 		Files.writeString(new File("pack/GeneratedPack/pack.mcmeta").toPath(), """
 				{
 				  "pack": {
@@ -163,6 +149,9 @@ public class ExampleMod implements ModInitializer {
 			String file_name = file.getName().split("\\.")[0];
 			String item_name = file_name;
 			int layer = 0;
+			/*
+			 * Used by armors to know which layer to apply the texture to.
+			 */
 			if (file_name.endsWith("_layer_1") || file_name.endsWith("_layer_2")) {
 				layer = Integer.parseInt(file_name.split("_layer_")[1]);
 				item_name = file_name.split("_layer_")[0];
@@ -173,8 +162,10 @@ public class ExampleMod implements ModInitializer {
 				return;
 			}
 			Identifier id = Registry.ITEM.getId(item.material());
+			// Writes the texture to the texture pack.
 			FileUtils.copyFile(file,
 					new File("pack/GeneratedPack/assets/minecraft/mcpatcher/cit/" + mod + "/" + file_name + ".png"));
+			// Writes the binding to the item.
 			Files.writeString(
 					new File("pack/GeneratedPack/assets/minecraft/mcpatcher/cit/" + mod + "/" + file_name
 							+ ".properties").toPath(),
@@ -184,6 +175,9 @@ public class ExampleMod implements ModInitializer {
 		});
 	}
 
+	/*
+	 * Gets the armor player model name for a given item.
+	 */
 	public static int getArmorLayer(Item item) {
 		Identifier id = Registry.ITEM.getId(item);
 		if (id.getPath().endsWith("_chestplate") || id.getPath().endsWith("_helmet") || id.getPath().endsWith("_boots")

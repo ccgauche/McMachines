@@ -14,6 +14,10 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+/**
+ * This class is responsible for saving and loading data from the disk. Every
+ * data used for blocks... Is stored in this class.
+ */
 public final class DataRegistry {
 
 	@NotNull
@@ -37,6 +41,12 @@ public final class DataRegistry {
 		return g;
 	}
 
+	/**
+	 * Saves to the disk all the data
+	 *
+	 * @param file The name of the file to save to
+	 * @throws IOException
+	 */
 	public static void save(File file) throws IOException {
 		if (file.exists())
 			file.delete();
@@ -46,6 +56,11 @@ public final class DataRegistry {
 		stream.close();
 	}
 
+	/**
+	 * Loads from the disk all the data
+	 *
+	 * @param file The name of the file to load from
+	 */
 	public static void load(File file) throws IOException {
 		if (!file.exists())
 			return;
@@ -54,6 +69,13 @@ public final class DataRegistry {
 		stream.close();
 	}
 
+	/**
+	 * Links a datacompound to a block
+	 *
+	 * @param world    The world in which the block is
+	 * @param pos      The position of the block
+	 * @param compound The data to link
+	 */
 	public static void write(@NotNull World world, @NotNull BlockPos pos, DataCompound compound) {
 		var map = getMap(world);
 		DataCompound compound1 = map.get(pos);
@@ -64,6 +86,16 @@ public final class DataRegistry {
 		}
 	}
 
+	/**
+	 *
+	 * Sets a value in the datacompound of a block
+	 *
+	 * @param world The world in which the block is
+	 * @param key   The key of the data
+	 * @param pos   The position of the block
+	 * @param value The value of the data
+	 * 
+	 */
 	public static void setRaw(@NotNull World world, @NotNull String key, @NotNull BlockPos pos,
 			@Nullable Object value) {
 		var map = getMap(world);
@@ -80,6 +112,14 @@ public final class DataRegistry {
 		}
 	}
 
+	/**
+	 * Gets a value from the datacompound of a block
+	 *
+	 * @param world The world in which the block is
+	 * @param key   The key of the data
+	 * @param pos   The position of the block
+	 * @return The value of the data
+	 */
 	@Nullable
 	public static Object getRaw(@NotNull World world, @NotNull String key, @NotNull BlockPos pos) {
 		var map = getMap(world);
@@ -88,6 +128,8 @@ public final class DataRegistry {
 			return null;
 		return stringObjectHashMap.get(key);
 	}
+
+	// Some constants to make the code more readable
 
 	public static final Key<Integer> ENERGY_CONTENT = new Key<>("energy_content");
 	public static final Key<Integer> ENERGY_MAX = new Key<>("energy_max");
@@ -99,6 +141,9 @@ public final class DataRegistry {
 	public static final Key<Integer> GEN_PER_TICK = new Key<>("gen_per_second");
 	public static final Key<Integer> GEN_REMAINING_SECS = new Key<>("gen_remaining_secs");
 
+	/**
+	 * Represents a key to a value in a datacompound
+	 */
 	public static final class Key<T> {
 		@NotNull
 		private final String key;

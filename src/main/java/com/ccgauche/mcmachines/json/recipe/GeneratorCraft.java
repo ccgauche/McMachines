@@ -1,13 +1,14 @@
 package com.ccgauche.mcmachines.json.recipe;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
 
 import com.ccgauche.mcmachines.data.CItem;
 import com.ccgauche.mcmachines.json.Dual;
-import com.ccgauche.mcmachines.json.conditions.ICondition;
+import com.ccgauche.mcmachines.registry.events.MachinePostTickListener;
+import com.ccgauche.mcmachines.registry.events.MachineTickListener;
 
 import net.minecraft.item.ItemStack;
 
@@ -15,21 +16,26 @@ import net.minecraft.item.ItemStack;
 public class GeneratorCraft implements IRecipe {
 
 	@NotNull
-	public String on;
+	public final List<@NotNull Dual<@NotNull CItem, @NotNull Integer>> inputs;
 	@NotNull
-	public List<@NotNull Dual<@NotNull CItem, @NotNull Integer>> inputs;
+	public final List<@NotNull Dual<@NotNull ItemStack, @NotNull Integer>> outputs;
 	@NotNull
-	public List<@NotNull Dual<@NotNull ItemStack, @NotNull Integer>> outputs;
+	public final int energy_production;
 	@NotNull
-	public Integer energy_production;
-	@NotNull
-	public Integer tick_duration;
-	public Optional<ICondition> conditions;
-	public Optional<ICondition> post_craft;
+	public final int tick_duration;
 
-	@Override
 	@NotNull
-	public String on() {
-		return on;
+	public final List<@NotNull MachineTickListener> preCraft = new ArrayList<>();
+
+	@NotNull
+	public final List<@NotNull MachinePostTickListener> postCraft = new ArrayList<>();
+
+	public GeneratorCraft(@NotNull List<@NotNull Dual<@NotNull CItem, @NotNull Integer>> inputs,
+			@NotNull List<@NotNull Dual<@NotNull ItemStack, @NotNull Integer>> outputs, @NotNull int energy_production,
+			@NotNull int tick_duration) {
+		this.inputs = inputs;
+		this.outputs = outputs;
+		this.energy_production = energy_production;
+		this.tick_duration = tick_duration;
 	}
 }

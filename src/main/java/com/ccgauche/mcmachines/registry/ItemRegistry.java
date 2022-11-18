@@ -8,6 +8,9 @@ import org.jetbrains.annotations.Nullable;
 import com.ccgauche.mcmachines.data.IItem;
 import com.ccgauche.mcmachines.handler.Registry;
 
+/**
+ * The registry in which all items are stored
+ */
 public class ItemRegistry {
 
 	@NotNull
