@@ -2,7 +2,7 @@
 
 ## Introduction
 
-McMachines is a server side fabric mod that enable modded like functionalities in vanilla.
+McMachines is a server side fabric mod that enables modded like functionalities in vanilla.
 Custom textures can be applied if the client installs either OptiFine (Forge), MCPatcher (Forge) or CITResewn (Fabric)
 
 ## Installing the mod
